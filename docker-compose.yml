@@ -1,0 +1,53 @@
+version: "3"
+services:
+  staging:
+    build:
+      context: ./tomcat-with-ssh
+    image: tomcat-with-ssh
+    container_name: tomcatstaging
+    ports: 
+      - "8090:8080"
+    networks:
+      hostnet:
+        aliases:
+          - "development"
+    volumes:
+      - "staging_webapps:/usr/local/tomcat/webapps"
+  prod:
+    build:
+      context: ./tomcat-with-ssh
+    image: tomcat-with-ssh
+    container_name: tomcatprod
+    ports: 
+      - "9090:8080"
+    networks:
+      hostnet:
+        aliases:
+          - "production"
+    volumes:
+      - "prod_webapps:/usr/local/tomcat/webapps"
+  jenkins:
+    build:
+      context: ./local-jenkins
+    image: local-jenkins
+    container_name: localjenkins
+    ports:
+      - "8080:8080"
+    networks:
+      hostnet:
+        aliases:
+          - "jenkins"
+    volumes:
+      - "jenkins_home:/var/jenkins_home"
+
+networks:
+  hostnet:
+    external: true
+
+volumes:
+  staging_webapps:
+    external: true
+  prod_webapps:
+    external: true
+  jenkins_home:
+    external: true
