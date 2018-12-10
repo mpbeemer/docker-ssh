@@ -20,3 +20,42 @@ RUN /usr/local/tomcat/bin/startup.sh
 
 scp -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -f *.war root@tomcatstaging:/usr/local/tomcat/webapps
 
+====================================
+initial build (as root):
+- install docker
+- install docker-compose
+- issue commands:
+docker network create hostnet
+docker volume create staging_webapps
+docker volume create prod_webapps
+docker volume create local_jenkins
+- clone your fork of https://github.com/mpbeemer/docker-ssh.git
+- issue command:
+docker-compose up &
+- (docker will build containers from scratch.  This includes new Jenkins installation and 
+initial Jenkins admin key will be included in the output)
+- Open Jenkins in web browser: 127.0.0.1:8080
+- Enter admin key, select "Select plugins to install", select 'None' and continue (plugins have 
+been installed by docker build).
+- Set up personal admin ID
+- Select 'Manage Jenkins', 'Manage Plugins', update all installed plugins
+- Create new build project:
+Enter Name of your choice
+Select Pipeline project type
+Click 'OK'
+In Pipeline section:
+Select Definition 'Pipeline script from SCM'
+Select SCM 'Git'
+Enter respository URL for your fork of https://github.com/mpbeemer/pipeline-demo.git
+Click 'Save'
+Click 'Build Now' to populate project data from SCM and execute
+
+[need to configure Jenkins to include maven?]
+
+- issue command:
+docker-compose down
+to shut down docker containers
+
+
+
+
